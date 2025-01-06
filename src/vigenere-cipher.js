@@ -20,13 +20,63 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  constructor(isDirect = true) {
+    this.isDirect = isDirect; // Определяет, нужно ли выводить результат в прямом порядке
+    this.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+
+  encrypt(message, key) {
+    if (!message || !key) throw new Error('Incorrect arguments!');
+
+    let result = '';
+    let keyIndex = 0;
+
+    message = message.toUpperCase();
+    key = key.toUpperCase();
+
+    for (let i = 0; i < message.length; i++) {
+      const messageChar = message[i];
+      if (this.alphabet.includes(messageChar)) {
+        const messageIndex = this.alphabet.indexOf(messageChar);
+        const keyChar = key[keyIndex % key.length];
+        const keyIndexValue = this.alphabet.indexOf(keyChar);
+
+        const encryptedChar = this.alphabet[(messageIndex + keyIndexValue) % 26];
+        result += encryptedChar;
+        keyIndex++;
+      } else {
+        result += messageChar;
+      }
+    }
+
+    return this.isDirect ? result : result.split('').reverse().join('');
+  }
+
+  decrypt(message, key) {
+    if (!message || !key) throw new Error('Incorrect arguments!');
+
+    let result = '';
+    let keyIndex = 0;
+
+    message = message.toUpperCase();
+    key = key.toUpperCase();
+
+    for (let i = 0; i < message.length; i++) {
+      const messageChar = message[i];
+      if (this.alphabet.includes(messageChar)) {
+        const messageIndex = this.alphabet.indexOf(messageChar);
+        const keyChar = key[keyIndex % key.length];
+        const keyIndexValue = this.alphabet.indexOf(keyChar);
+
+        const decryptedChar = this.alphabet[(messageIndex - keyIndexValue + 26) % 26];
+        result += decryptedChar;
+        keyIndex++;
+      } else {
+        result += messageChar;
+      }
+    }
+
+    return this.isDirect ? result : result.split('').reverse().join('');
   }
 }
 
